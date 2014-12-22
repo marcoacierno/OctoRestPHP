@@ -2,5 +2,5 @@
 RewriteEngine On
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule api/v(\d)+/(.*)$ index.php?request=$2&version=$1 [QSA,NC,L]
+RewriteRule api/v(\d)+/(.*)$ api.php?request=$2&version=$1 [QSA,NC,L]
 #</IfModule>
