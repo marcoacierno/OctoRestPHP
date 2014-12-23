@@ -142,10 +142,6 @@ class Index {
     $methodName = $this->methodTypeToMethodName($method);
     $methodReference = $clazz->getMethod($methodName);
 
-    if ($methodReference === NULL) {
-      throw new RestException("wtf?", 6, 500);
-    }
-
 //    $requestBody = http_get_request_body();
     $requestBody = $this->readInput();
 
