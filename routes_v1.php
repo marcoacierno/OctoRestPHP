@@ -1,4 +1,7 @@
 <?php
+/**
+ * It's important to have keep the name "routes"
+ */
 $routes = array(
     /**
      * L'endpoint è la parte che segue la versione nell'url.

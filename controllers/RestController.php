@@ -1,5 +1,7 @@
 <?php
 
+// TODO is the check really needed? sometimes it fails saying that RestController class already exists
+//if (!interface_exists("RestController")) {
 /**
  * Tutte le classi che fungono da rest controller
  * devono implementare questa interfaccia
@@ -49,3 +51,4 @@ interface RestController {
    */
   public function doDelete($verb, $args, $requestBody);
 }
+//}
