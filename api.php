@@ -223,9 +223,7 @@ class Index {
       $type = $this->ifAny;
     }
 
-    $supportedTransformers = array_filter($this->transformers, function($transformer) use($type) {
-      return in_array($type, $transformer->supports());
-    });
+    $supportedTransformers = array_filter($this->transformers, array(new TransformerForType($type), "filterTransformers"));
     // how to handle the case where multiple transformers registed for the same type?
 
     // per ora supporta soltanto il primo che trova
@@ -264,4 +262,16 @@ try {
   $index->parseDirectly("error", NULL, array($ex->getHttpResponseCode(), $ex->getMessage()), 1, "*/*", false);
 } catch (Exception $ex) {
   $index->parseDirectly("error", NULL, array(500, "Internal error"), 1, "*/*", false);
+}
+
+class TransformerForType {
+  private $type;
+
+  function __construct($type) {
+    $this->type = $type;
+  }
+
+  function filterTransformers($transformer) {
+    return in_array($this->type, $transformer->supports());
+  }
 }
