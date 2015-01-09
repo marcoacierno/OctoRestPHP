@@ -10,3 +10,8 @@ Not sure why I decided to use "Octo" in the name.
 
 The documentation is in Italian (lol). Usually I share this kind of code (useless for others but not for me maybe) in Bitbucket
 but today I decided to post it here.
+
+How to use
+==
+
+I clone the repository and start creating my API from the existing code (editing routes_v1.php file and creating new controllers). 
