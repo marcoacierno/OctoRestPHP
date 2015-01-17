@@ -30,18 +30,28 @@ class Index {
     $version = $_GET['version'];
 
     // TODO rewrite -- deve controllare se il framework può convertire la risposta
-    $accepts = explode(",", $_SERVER['HTTP_ACCEPT']);
     $accept = NULL;
 
-    foreach($accepts as $attempt) {
-      if ($this->supports($attempt) || $this->isAny($attempt)) {
-        $accept = $attempt;
-        break;
-      }
-    }
+    if (empty($_SERVER['HTTP_ACCEPT'])) {
+      $accept = $this->ifAny;
+    } else {
+      $accepts = explode(",", $_SERVER['HTTP_ACCEPT']);
 
-    if ($accept === NULL) {
-      throw new RestException("The format(s) you asked " . $_SERVER['HTTP_ACCEPT'] . " are not allowed!", 1, 406);
+      foreach ($accepts as $attempt) {
+        $possibleQuoteSeparator = strpos($attempt, ";");
+        if ($possibleQuoteSeparator !== false) {
+          $attempt = substr($attempt, 0, $possibleQuoteSeparator);
+        }
+
+        if ($this->supports($attempt) || $this->isAny($attempt)) {
+          $accept = $attempt;
+          break;
+        }
+      }
+
+      if ($accept === NULL) {
+        throw new RestException("The format(s) you asked " . $_SERVER['HTTP_ACCEPT'] . " are not allowed!", 1, 406);
+      }
     }
 
     $this->parseDirectly($endpoint, $verb, $args, $version, $accept);
