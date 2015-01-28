@@ -50,7 +50,7 @@ class Index {
       }
 
       if ($accept === NULL) {
-        throw new RestException("The format(s) you asked " . $_SERVER['HTTP_ACCEPT'] . " are not allowed!", 1, 406);
+        throw new RestException("The format(s) you asked " . $_SERVER['HTTP_ACCEPT'] . " are not allowed!", 406);
       }
     }
 
@@ -92,11 +92,11 @@ class Index {
       /** @noinspection PhpIncludeInspection */
       include "routes.php";
     } else {
-      throw new RestException("Impossibile reinderezzare la richiesta senza il file routes (version=" . $version . ")", 10, 500);
+      throw new RestException("Impossibile reinderezzare la richiesta senza il file routes (version=" . $version . ")", 500);
     }
 
     if (!isset($routes)) {
-      throw new RestException("Impossibile trovare l'array contenente le mappature", 10, 500);
+      throw new RestException("Impossibile trovare l'array contenente le mappature", 500);
     }
 
     header("Access-Control-Allow-Orgin: *");
@@ -108,7 +108,7 @@ class Index {
     header("Content-Type: " . ($this->isAny($accept) ? $this->ifAny : $accept));
 
     if (!isset($routes[$endpoint])) {
-      throw new RestException("Endpoint $endpoint doesn't exists!", 3, 404);
+      throw new RestException("Endpoint $endpoint doesn't exists!", 404);
     }
 
     $currentMethod = $this->parseMethod();
@@ -120,11 +120,11 @@ class Index {
       // comunico che l'endpoint non esiste anche se non è vero per evitare di diffondere
       // l'esistenza di questo endpoint privato.
 
-      throw new RestException("Endpoint $endpoint doesn't exists!", 3, 404);
+      throw new RestException("Endpoint $endpoint doesn't exists!", 404);
     }
 
     if (!in_array($currentMethod, $methods)) {
-      throw new RestException("The method $currentMethod isn't supported for $endpoint!", 2, 405);
+      throw new RestException("The method $currentMethod isn't supported for $endpoint!", 405);
     }
 
     $this->execute($map, $currentMethod, $verb, $args, $accept);
@@ -137,7 +137,7 @@ class Index {
     $controller = $controllerInfo["controller"];
 
     if (!file_exists("controllers/" . $file)) {
-      throw new RestException("The file to include doesn't exists", 4, 500);
+      throw new RestException("The file to include doesn't exists", 500);
     }
 
     /** @noinspection PhpIncludeInspection */
@@ -146,7 +146,7 @@ class Index {
     $clazz = new ReflectionClass($controller);
 
     if (!$clazz->implementsInterface("RestController")) {
-      throw new RestException("Unable to complete your request (controller)", 5, 500);
+      throw new RestException("Unable to complete your request (controller)", 500);
     }
 
     $methodName = $this->methodTypeToMethodName($method);
@@ -165,7 +165,7 @@ class Index {
     $transformer = $this->searchTransformer($accept);
 
     if ($transformer === NULL) {
-      throw new RestException("Impossibile trovare un transformatore per $accept!", 6, 500);
+      throw new RestException("Impossibile trovare un transformatore per $accept!", 500);
     }
 
     $output = $transformer->transform($result["response"]);
@@ -219,7 +219,7 @@ class Index {
         return "doDelete";
       }
       default: {
-        throw new RestException("Method not supported in the interface", 11, 500);
+        throw new RestException("Method not supported in the interface", 500);
       }
     }
   }
@@ -281,6 +281,10 @@ class TransformerForType {
     $this->type = $type;
   }
 
+  /**
+   * @param $transformer Transformer
+   * @return bool
+   */
   function filterTransformers($transformer) {
     return in_array($this->type, $transformer->supports());
   }
