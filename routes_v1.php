@@ -9,7 +9,7 @@ $routes = array(
      *
      * api/v1/endpoint -> api/v1/users
      */
-    "users" => array(
+    //"users" => array(
         /**
          * I metodi supportati da questo endpoint.
          *
@@ -18,24 +18,25 @@ $routes = array(
          *
          * In questo esempio l'endpoint supporta i metodi GET e PUT
          */
-        "methods" => array(
-            "GET",
-            "POST"
-        ),
+    //    "methods" => array(
+    //        "GET",
+    //        "POST"
+    //    ),
         /**
          * Il controller che dovrà rispondere alla richiesta
          */
-        "controllerFile" => array(
+    //    "controllerFile" => array(
           /**
            * Il file da includere (contiene la classe da implementare)
            */
-          "file" => "UsersController.php",
+    //      "file" => "UsersController.php",
           /**
            * Il nome della classe
            */
-          "controller" => "UsersController",
-        ),
-    ),
+    //      "controller" => "UsersController",
+    //    ),
+    //),
+    
     /**
      * L'endpoint error è un endpoint interno
      * utilizzato quando qualcosa va storto
