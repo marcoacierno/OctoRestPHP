@@ -1,4 +1,5 @@
 <?php
+// Version 0.4.0
 include "transformers/transformers.php";
 include "RestException.php";
 
