@@ -263,7 +263,7 @@ class Index {
 
   /**
    * @param $accept
-   * @return null|Transformer
+   * @return Transformer
    * @throws RestException
    */
   private function getTransformer($accept) {
