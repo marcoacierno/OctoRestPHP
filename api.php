@@ -251,13 +251,11 @@ class Index {
     if (file_exists("routes_v" . $version . ".php")) {
       /** @noinspection PhpIncludeInspection */
       include "routes_v" . $version . ".php";
+    } else if (file_exists("routes.php")) {
+      /** @noinspection PhpIncludeInspection */
+      include "routes.php";
     } else {
-      if (file_exists("routes.php")) {
-        /** @noinspection PhpIncludeInspection */
-        include "routes.php";
-      } else {
-        throw new RestException("Version $version not supported!", 500);
-      }
+      throw new RestException("Version $version not supported!", 500);
     }
   }
 
