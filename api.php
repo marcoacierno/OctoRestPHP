@@ -92,11 +92,11 @@ class Index {
       /** @noinspection PhpIncludeInspection */
       include "routes.php";
     } else {
-      throw new RestException("Impossibile reinderezzare la richiesta senza il file routes (version=" . $version . ")", 500);
+      throw new RestException("Version $version not supported!", 500);
     }
 
     if (!isset($routes)) {
-      throw new RestException("Impossibile trovare l'array contenente le mappature", 500);
+      throw new RestException("Unable to load the endpoint (routes array not exists)", 500);
     }
 
     header("Access-Control-Allow-Orgin: *");
@@ -165,7 +165,7 @@ class Index {
     $transformer = $this->searchTransformer($accept);
 
     if ($transformer === NULL) {
-      throw new RestException("Impossibile trovare un transformatore per $accept!", 500);
+      throw new RestException("Your accept $accept is not supported by this API!", 500);
     }
 
     $output = $transformer->transform($result["response"]);
