@@ -86,15 +86,7 @@ class Index {
    * @throws RestException
    */
   public function parseDirectly($endpoint, $verb, $args, $version, $accept, $directAccess = true) {
-    if (file_exists("routes_v" . $version . ".php")) {
-      /** @noinspection PhpIncludeInspection */
-      include "routes_v" . $version . ".php";
-    } else if (file_exists("routes.php")) {
-      /** @noinspection PhpIncludeInspection */
-      include "routes.php";
-    } else {
-      throw new RestException("Version $version not supported!", 500);
-    }
+    $this->includeRoute($version);
 
     if (!isset($routes)) {
       throw new RestException("Unable to load the endpoint (routes array not exists)", 500);
@@ -102,10 +94,6 @@ class Index {
 
     header("Access-Control-Allow-Orgin: *");
     header("Access-Control-Allow-Methods: *");
-
-//    var_dump($this->isAny($accept) ? $this->ifAny : $accept);
-//    var_dump(("Content-Type: application/json") == ("Content-Type: " . ($this->isAny($accept) ? $this->ifAny : $accept)));
-    // without the () it doesn't work, I have no idea why
     header("Content-Type: " . ($this->isAny($accept) ? $this->ifAny : $accept));
 
     if (!isset($routes[$endpoint])) {
@@ -153,22 +141,13 @@ class Index {
     $methodName = $this->methodTypeToMethodName($method);
     $methodReference = $clazz->getMethod($methodName);
 
-//    $requestBody = http_get_request_body();
     $requestBody = $this->readInput();
 
-    // per chiamare i metodi devo avere un instanza della classe
     $clazzInstance = $clazz->newInstance();
     $result = $methodReference->invoke($clazzInstance, $verb, $args, $requestBody);
 
-    // result è una semplice array devo convertirlo nel tipo richiesto
-    // in $accept
-
-    $transformer = $this->searchTransformer($accept);
-
-    if ($transformer === NULL) {
-      throw new RestException("Your accept $accept is not supported by this API!", 500);
-    }
-
+    // result è una semplice array devo convertirlo nel tipo richiesto in $accept
+    $transformer = $this->getTransformer($accept);
     $output = $transformer->transform($result["response"]);
 
     $responseCode = $result["internal"]["responseCode"];
@@ -235,8 +214,8 @@ class Index {
     }
 
     $supportedTransformers = array_filter($this->transformers, array(new TransformerForType($type), "filterTransformers"));
-    // how to handle the case where multiple transformers registed for the same type?
 
+    // how to handle the case where multiple transformers registed for the same type?
     // per ora supporta soltanto il primo che trova
     return $supportedTransformers[0];
   }
@@ -262,6 +241,38 @@ class Index {
     }
 
     return $output;
+  }
+
+  /**
+   * @param $version
+   * @throws RestException
+   */
+  private function includeRoute($version) {
+    if (file_exists("routes_v" . $version . ".php")) {
+      /** @noinspection PhpIncludeInspection */
+      include "routes_v" . $version . ".php";
+    } else {
+      if (file_exists("routes.php")) {
+        /** @noinspection PhpIncludeInspection */
+        include "routes.php";
+      } else {
+        throw new RestException("Version $version not supported!", 500);
+      }
+    }
+  }
+
+  /**
+   * @param $accept
+   * @return null|Transformer
+   * @throws RestException
+   */
+  private function getTransformer($accept) {
+    $transformer = $this->searchTransformer($accept);
+
+    if ($transformer === NULL) {
+      throw new RestException("Your accept $accept is not supported by this API!", 500);
+    }
+    return $transformer;
   }
 }
 
